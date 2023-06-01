@@ -1,8 +1,21 @@
-import { Form, Input, Button, Checkbox , Card} from 'antd'
+import { Form, Input, Button, Checkbox , Card, message} from 'antd'
 import './index.scss'
+import { useStore } from '@/store'
+import { useNavigate } from 'react-router-dom'
 function Login (){
-    const finish = values => {
-        console.log(values)
+    // const finish = values => {
+    //     console.log(values)
+    // }
+    const navigate = useNavigate()
+    const {loginStore } = useStore()
+    const onFinish = async values=>{
+        const {mobile, code} = values
+        try{
+            await loginStore.login({mobile, code})
+            navigate('/')
+        }catch(e){
+            message.error(e.response?.data?.message || '登录失败')
+        }
     }
     return (
         <div className="login">
@@ -10,7 +23,7 @@ function Login (){
                 <div className='login-font'>账号登录</div>
                 <Form 
                     validateTrigger= {['onBlur', 'onChange']}
-                    onFinish={ finish }
+                    onFinish={ onFinish }
                     initialValues={{
                         mobile: '13911111111',
                         code: '246810',
