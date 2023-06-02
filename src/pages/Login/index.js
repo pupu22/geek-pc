@@ -14,6 +14,7 @@ function Login (){
             await loginStore.login({mobile, code})
             navigate('/')
         }catch(e){
+            console.log(e)
             message.error(e.response?.data?.message || '登录失败')
         }
     }
