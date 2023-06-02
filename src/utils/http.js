@@ -1,5 +1,6 @@
 import axios from 'axios'
-import { getToken } from './token'
+import { clearToken, getToken } from './token'
+import { history } from './history'
 
 const http = axios.create({
   baseURL: 'http://geek.itheima.net/v1_0',
@@ -24,6 +25,13 @@ http.interceptors.response.use((response)=> {
   }, (error)=> {
     // 超出 2xx 范围的状态码都会触发该函数。
     // 对响应错误做点什么
+
+    // 当 token 失效的时候，请求返回的状态码是401，
+    // 此时要跳转到 登录页面
+    if(error.response.status === 401){
+      clearToken()
+      history.push('/login')
+    }
     return Promise.reject(error)
 })
 
