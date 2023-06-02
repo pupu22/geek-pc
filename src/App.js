@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import Login from './pages/Login';
 import Layout from './pages/Layout';
 import {AuthRoute} from './components/AuthRoute';
@@ -6,12 +6,14 @@ import './App.css'
 import Article from './pages/Article';
 import Home from './pages/Home';
 import Publish from './pages/Publish';
+import { HistoryRouter, history } from './utils/history';
+
 function App() {
   return (
-    <BrowserRouter>
+    <HistoryRouter history={history}>
       <div className="App">
         <Routes>
-           {/* 需要鉴权的路由 */}
+          {/* 需要鉴权的路由 */}
           <Route path='/' element= {<AuthRoute><Layout/></AuthRoute>}>
             <Route index element= {<Home/>}></Route>
             <Route path="article" element= {<Article/>}></Route>
@@ -20,7 +22,8 @@ function App() {
           <Route path='/login' element={<Login/>}></Route>
         </Routes>
       </div>    
-    </BrowserRouter>
+    </HistoryRouter>
+
 
   );
 }
