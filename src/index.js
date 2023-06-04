@@ -4,11 +4,13 @@ import 'antd/dist/reset.css'
 import './index.scss';
 import App from './App';
 import { ConfigProvider } from 'antd'
+import zhCN from 'antd/locale/zh_CN';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
 
-	<ConfigProvider 
+	<ConfigProvider
+        locale={zhCN}
         theme={{ 
             token: { 
               colorPrimary: "#A0D911"
