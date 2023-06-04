@@ -87,6 +87,29 @@ const Article = () =>  {
         fetchChannels()
     }, [])
 
+    //渲染文章表格数据
+    const [article, setArticle] = useState({
+        list: [],
+        count: 0
+    })
+    //参数管理
+    const [params, setParams] = useState({
+        page: 1,
+        per_page: 10
+    })
+
+    //发送获取文章数据请求
+    useEffect(() => {
+        async function fetchArticlList(){
+            const res = await http.get('/mp/articles', {params})
+            const {results, total_count} = res.data
+            setArticle({
+                list:results,
+                count: total_count
+            })
+        }
+        fetchArticlList()
+    },[params])
     return (
         <div>
             <Card
@@ -135,8 +158,8 @@ const Article = () =>  {
                 </Form.Item>
             </Form>
             </Card>
-            <Card title={`根据筛选条件共查询到 count 条结果：`}>
-                <Table rowKey="id" columns={columns} dataSource={data} />
+            <Card title={`根据筛选条件共查询到 ${article.count} 条结果：`}>
+                <Table rowKey="id" columns={columns} dataSource={article.list} />
             </Card>
         </div>
     )
