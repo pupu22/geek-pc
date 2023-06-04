@@ -52,7 +52,7 @@ const GeekLayout = () => {
         </div>
       </Header>
       <Layout>
-        <Sider width={200} className="site-layout-background">
+        <Sider width={170} className="site-layout-background">
           <Menu
             mode="inline"
             theme="dark"
