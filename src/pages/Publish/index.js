@@ -15,7 +15,7 @@ import './index.scss'
 import ReactQuill from 'react-quill'
 import 'react-quill/dist/quill.snow.css'
 import { useStore } from '@/store'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { http } from '@/utils'
 
 const { Option } = Select
@@ -42,12 +42,12 @@ const Publish = () => {
     const count = e.target.value
     setImgCount(count)
     // 从仓库里面取对应的图片数量，交给我们用来渲染图片列表的fileList
-    if(imgCount === 1){
+    if(count === 1){
       // 如果为单图模式，拿到第一张图片
-      const img = cachaImgList.current? cachaImgList.current[0]:[]
-      setFileList(img)
-    } else if(imgCount === 3){
-      setFileList(cachaImgList.current? cachaImgList.current:[])
+      const img = cachaImgList.current? cachaImgList.current[0] : []
+      setFileList(img? [img]:[])
+    } else if(count === 3){
+      setFileList(cachaImgList.current)
     }
   }
 
@@ -72,6 +72,24 @@ const Publish = () => {
   const [params] = useSearchParams()
   const id = params.get('id')
 
+  //数据回填 1.表单回填 2.暂存列表  3.更新组件fileList
+  const form = useRef(null)
+  useEffect(() => {
+    const loadDetail = async () => {
+      const res = await http.get(`/mp/articles/${id}`)
+      // 表单数据回填
+      form.current.setFieldsValue({...res.data, type: res.data.cover.type})
+      const formatImgList = res.data.cover.images.map(url => ({url}))
+      setFileList(formatImgList)
+
+      // cachaImgList.current也是一个对象数组，因此也要进行数据处理
+      cachaImgList.current = formatImgList
+    }
+    // 必须是编辑状态，才可以发送请求
+    if(id){
+      loadDetail()
+    } 
+  }, [id])
 
   return (
     <div className="publish">
@@ -90,6 +108,7 @@ const Publish = () => {
           wrapperCol={{ span: 16 }}
           initialValues={{ type: 1 }}
           onFinish={onFinish}
+          ref={form}
         >
           <Form.Item
             label="标题"
