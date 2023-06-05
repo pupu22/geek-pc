@@ -16,6 +16,7 @@ import ReactQuill from 'react-quill'
 import 'react-quill/dist/quill.snow.css'
 import { useStore } from '@/store'
 import { useRef, useState } from 'react'
+import { http } from '@/utils'
 
 const { Option } = Select
 
@@ -34,8 +35,6 @@ const Publish = () => {
     cachaImgList.current = fileList
   }
 
-
-
   // 切换图片数量 radio 
   //存放 图片数量
   const [imgCount, setImgCount] = useState(1)
@@ -46,10 +45,27 @@ const Publish = () => {
     if(imgCount === 1){
       // 如果为单图模式，拿到第一张图片
       const img = cachaImgList.current? cachaImgList.current[0]:[]
-      setFileList(img ?[img] :[])
+      setFileList(img)
     } else if(imgCount === 3){
-      setFileList(cachaImgList.current)
+      setFileList(cachaImgList.current? cachaImgList.current:[])
     }
+  }
+
+  //表单数据提交
+  const onFinish = async (values) => {
+    // 数据的二次处理 重点是处理cover字段
+    const { channel_id, content, title, type } = values
+    const params = {
+      channel_id,
+      content,
+      title,
+      type,
+      cover: {
+        type: type,
+        images: fileList.map(item => item.response.data.url)
+      }
+    }
+    await http.post('/mp/articles?draft=false', params)
   }
   return (
     <div className="publish">
@@ -67,6 +83,7 @@ const Publish = () => {
           labelCol={{ span: 4 }}
           wrapperCol={{ span: 16 }}
           initialValues={{ type: 1 }}
+          onFinish={onFinish}
         >
           <Form.Item
             label="标题"
