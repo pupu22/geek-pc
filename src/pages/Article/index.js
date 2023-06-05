@@ -4,11 +4,13 @@ import {Link, useNavigate} from 'react-router-dom'
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons'
 import { useEffect, useState } from "react"
 import { http } from "@/utils"
-
+import { useStore } from "@/store"
+import { observer } from "mobx-react-lite"
 
 const Article = () =>  {
     const { Option } = Select
     const { RangePicker } = DatePicker
+    const {channelStore} = useStore()
 
     //删除文章
     const delArticle = async (data)=>{
@@ -88,30 +90,15 @@ const Article = () =>  {
         }
       ]
     
-    // const data = [
-    //     {
-    //         id: '8218',
-    //         comment_count: 0,
-    //         cover: {
-    //             images:['http://geek.itheima.net/resources/images/15.jpg'],
-    //         },
-    //         like_count: 0,
-    //         pubdate: '2019-03-11 09:00:00',
-    //         read_count: 2,
-    //         status: 2,
-    //         title: 'wkwebview离线化加载h5资源解决方案' 
-    //     }
-    // ]
-    
     //获取频道列表
-    const [channels, setChannels] = useState([])
-    useEffect(()=>{
-        async function fetchChannels(){
-            const res = await http.get('/channels')
-            setChannels(res.data.channels)
-        }
-        fetchChannels()
-    }, [])
+    // const [channels, setChannels] = useState([])
+    // useEffect(()=>{
+    //     async function fetchChannels(){
+    //         const res = await http.get('/channels')
+    //         setChannels(res.data.channels)
+    //     }
+    //     fetchChannels()
+    // }, [])
 
     //渲染文章表格数据
     const [article, setArticle] = useState({
@@ -193,7 +180,7 @@ const Article = () =>  {
 
                 <Form.Item label="频道" name="channel_id" >
                     <Select placeholder="请选择文章频道" style={{width:200}}>
-                    {channels.map(item => (
+                    {channelStore.channelList.map(item => (
                         <Option key={item.id} value={item.id}>
                             {item.name}
                         </Option>
@@ -229,4 +216,4 @@ const Article = () =>  {
         </div>
     )
 }
-export default Article
+export default observer(Article)

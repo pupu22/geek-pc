@@ -17,14 +17,16 @@ const GeekLayout = () => {
   // 获取当前 激活的path路径
   const location = useLocation()
   const selectedKey = location.pathname
-  const { userStore, loginStore } = useStore()
+  const { userStore, loginStore, channelStore } = useStore()
 
   //获取用户的信息, 由于这是副作用，因此使用useEffect方法，只在最开始执行一次
+  // 获取文章频道
   useEffect(() => {
     try{
       userStore.getUserInfo()
+      channelStore.loadChannelList()
     } catch {}
-  }, [userStore])
+  }, [userStore, channelStore])
 
   // 退出登录 
   const navigate  = useNavigate()
