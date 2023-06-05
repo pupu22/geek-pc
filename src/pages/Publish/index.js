@@ -10,7 +10,7 @@ import {
   Select
 } from 'antd'
 import { PlusOutlined } from '@ant-design/icons'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import './index.scss'
 import ReactQuill from 'react-quill'
 import 'react-quill/dist/quill.snow.css'
@@ -67,15 +67,21 @@ const Publish = () => {
     }
     await http.post('/mp/articles?draft=false', params)
   }
+
+  // 文案适配， 获取路由参数id，如果文章存在，则文案为修改文章，否则为发布文章
+  const [params] = useSearchParams()
+  const id = params.get('id')
+
+
   return (
     <div className="publish">
       <Card
         title={
           <Breadcrumb separator=">">
             <Breadcrumb.Item>
-              <Link to="/home">首页</Link>
+              <Link to="/">首页</Link>
             </Breadcrumb.Item>
-            <Breadcrumb.Item>发布文章</Breadcrumb.Item>
+            <Breadcrumb.Item>{id? '编辑':'发布'}文章</Breadcrumb.Item>
           </Breadcrumb>
         }
       >
