@@ -58,6 +58,7 @@ const GeekLayout = () => {
           <Menu
             mode="inline"
             theme="dark"
+            selectedKeys={[selectedKey]}
             defaultSelectedKeys={[selectedKey]}
             style={{ height: '100%', borderRight: 0 }}
           >
