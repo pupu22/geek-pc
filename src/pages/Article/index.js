@@ -32,7 +32,12 @@ const Article = () =>  {
           dataIndex: 'cover',
           width:120,
           render: cover => {
-            return <img src={cover.images} width={80} height={60} alt="" />
+            if(cover.type === 3){
+                return cover.images.map(item => (
+                    <img src={item} width={200} height={150} alt="" />
+                ))
+            }
+            return <img src={cover.images} width={200} height={150} alt="" />
           }
         },
         {
