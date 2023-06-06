@@ -7,10 +7,11 @@ import {
   Input,
   Upload,
   Space,
-  Select
+  Select,
+  message
 } from 'antd'
 import { PlusOutlined } from '@ant-design/icons'
-import { Link, useSearchParams } from 'react-router-dom'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import './index.scss'
 import ReactQuill from 'react-quill'
 import 'react-quill/dist/quill.snow.css'
@@ -30,9 +31,21 @@ const Publish = () => {
 
   // 更新上传图片列表
   const onUploadChange = ({ fileList })  => {
-    setFileList(fileList)
+
+    // 这里关键位置： 需要做数据格式化
+    const formatList = fileList.map(file => {
+      // 上传完毕，做数据处理
+      if(file.response){
+        return {
+          url: file.response.url
+        }
+      }
+      // 在上传中时，不做处理
+      return file
+    })
+    setFileList(formatList)
     //将fileList 存入到仓库中一份
-    cachaImgList.current = fileList
+    cachaImgList.current = formatList
   }
 
   // 切换图片数量 radio 
@@ -49,23 +62,6 @@ const Publish = () => {
     } else if(count === 3){
       setFileList(cachaImgList.current)
     }
-  }
-
-  //表单数据提交
-  const onFinish = async (values) => {
-    // 数据的二次处理 重点是处理cover字段
-    const { channel_id, content, title, type } = values
-    const params = {
-      channel_id,
-      content,
-      title,
-      type,
-      cover: {
-        type: type,
-        images: fileList.map(item => item.response.data.url)
-      }
-    }
-    await http.post('/mp/articles?draft=false', params)
   }
 
   // 文案适配， 获取路由参数id，如果文章存在，则文案为修改文章，否则为发布文章
@@ -90,6 +86,32 @@ const Publish = () => {
       loadDetail()
     } 
   }, [id])
+
+  //表单数据提交
+  const navigate = useNavigate()
+  const onFinish = async (values) => {
+    // 数据的二次处理 重点是处理cover字段
+    const { channel_id, content, title, type } = values
+    const params = {
+      channel_id,
+      content,
+      title,
+      type,
+      cover: {
+        type: type,
+        images: fileList.map(item => item.url)
+      }
+    }
+    if(id){
+      await http.put(`/mp/articles/${id}?draft=false`,params)
+    } else{
+      await http.post('/mp/articles?draft=false', params)
+    }
+    
+    // 跳转列表，提示用户
+    navigate('/article')
+    message.success(`${id? '更新成功': '发布成功'}`)
+  }
 
   return (
     <div className="publish">
@@ -170,7 +192,7 @@ const Publish = () => {
           <Form.Item wrapperCol={{ offset: 4 }}>
             <Space>
               <Button size="large" type="primary" htmlType="submit">
-                发布文章
+                {id? '更新文章' :'发布文章'}
               </Button>
             </Space>
           </Form.Item>
