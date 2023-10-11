@@ -1,0 +1,37 @@
+.bullet_container{
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .bullet_track{
+    transform: translateX(0%);
+    height: 32px;
+    display: flex;
+    white-space: nowrap;
+    margin-bottom: 8px;
+    flex-direction: row;
+    animation:  bulletAnimation 12s linear infinite;
+   
+  }
+  
+  
+  .double_track{
+    display: flex;
+    flex-direction: row;
+  }
+  
+  .bullet{
+    white-space: nowrap;
+    font-size: 16px;
+    color: black;
+  }
+  
+  @keyframes bulletAnimation {
+    0%{
+      transform: translateX(0%);
+    }
+    100%{
+      transform: translateX(-50%);
+    }
+  }
